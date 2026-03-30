@@ -1,0 +1,92 @@
+import { User } from "../model/user.model.js";
+import bcrypt from "bcrypt";
+import { generatetoken } from "../utils/generatetToken.js";
+
+export const register = async (req, res) => {
+  try {
+    let { name, email, password } = req.body;
+
+    // Sanitize inputs
+    name = name?.trim();
+    email = email?.toLowerCase().trim();
+
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    // Password length validation
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 6 characters",
+      });
+    }
+
+    const user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({
+        success: false,
+        message: "User already exists",
+      });
+    }
+
+    const hashedpassword = await bcrypt.hash(password, 10);
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashedpassword,
+    });
+
+    return generatetoken(res, newUser, `Welcome ${newUser.name}`);
+  } catch (error) {
+    console.error("Register Error:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to register",
+      error: error.message,
+    });
+  }
+};
+
+export const login = async (req, res) => {
+  try {
+    let { email, password } = req.body;
+
+    // Sanitize inputs
+    email = email?.toLowerCase().trim();
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Incorrect email and password",
+      });
+    }
+
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Incorrect email and password",
+      });
+    }
+
+    return generatetoken(res, user, `Welcome back ${user.name}`);
+  } catch (error) {
+    console.error("Login Error:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to login",
+    });
+  }
+};
