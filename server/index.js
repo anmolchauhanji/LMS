@@ -4,6 +4,7 @@ import dotenv  from "dotenv";
 import userrouter from './routes/user.route.js'
 import cookieParser from "cookie-parser";
 import cors from "cors"
+import courseroute from "./routes/course.route.js"
 dotenv.config();
 // db calling
 
@@ -26,6 +27,8 @@ app.use((req, res, next) => {
 })
 
 app.use("/api/v1/user",userrouter)
+app.use("/api/v1/course",courseroute)
+
 app.get(('/home'),(req,res)=>{
     
     res.status(200).json({
