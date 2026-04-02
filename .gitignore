@@ -1,0 +1,71 @@
+# ========================
+# Dependencies
+# ========================
+node_modules/
+
+# ========================
+# Environment Variables
+# ========================
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# ========================
+# Database
+# ========================
+data/db/
+*.db
+
+# ========================
+# Multer Temp Uploads
+# (scoped to only the tmp folder, not all images)
+# ========================
+gitkeep/tmp/
+server/gitkeep/tmp/
+
+# ========================
+# Logs
+# ========================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ========================
+# JWT / Secrets
+# ========================
+*.pem
+*.key
+*.cert
+*.crt
+
+# ========================
+# Build Output (React frontend)
+# ========================
+client/build/
+client/dist/
+client/node_modules/
+
+# ========================
+# OS Files
+# ========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ========================
+# Editor / IDE
+# ========================
+.vscode/
+.idea/
+*.sw?
+
+# ========================
+# Cache / Misc
+# ========================
+.cache/
+.eslintcache
+*.tsbuildinfo
