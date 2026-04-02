@@ -41,7 +41,7 @@ return res.status(201).json({ course, message: 'course created' });
 export const getcreatorcourse = async  (req,res)=>{
 try {
     const userId = req.id
-    const course = await Course.find({creator:userId})
+    const course = await Course.find({instructor:userId})
     
     
             if (!course ) {
@@ -55,4 +55,24 @@ try {
  catch (error) {
     console.log(error);
 }
-    } 
+    }
+
+export const getPublishedCourses = async (req, res) => {
+    try {
+        const courses = await Course.find({ ispublished: true }).populate('instructor', 'name photoUrl');
+        
+        if (!courses || courses.length === 0) {
+            return res.status(200).json({
+                courses: [],
+                message: "No published courses found",
+            });
+        }
+        return res.status(200).json({courses});
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch published courses"
+        });
+    }
+} 

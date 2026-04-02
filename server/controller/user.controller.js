@@ -5,10 +5,11 @@ import { delmediafromcloudinary, uploadmedia } from "../utils/cloudinary.js";
 
 export const register = async (req, res) => {
   try {
-    let { name, email, password } = req.body;
+    let { name, email, password, role } = req.body;
 
     name = name?.trim();
     email = email?.toLowerCase().trim();
+    role = role?.toLowerCase().trim() || "student";
 
     if (!name || !email || !password) {
       return res.status(400).json({
@@ -20,6 +21,13 @@ export const register = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Password must be at least 6 characters",
+      });
+    }
+
+    if (!["instructor", "student"].includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: "Role must be either 'instructor' or 'student'",
       });
     }
 
@@ -36,6 +44,7 @@ export const register = async (req, res) => {
       name,
       email,
       password: hashedpassword,
+      role
     });
 
     return generatetoken(res, newUser, `Welcome ${newUser.name}`);
