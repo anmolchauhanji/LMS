@@ -12,7 +12,35 @@ const storage = multer.diskStorage({
   }
 })
 
-export const upload = multer({ storage: storage })
+// File size limits: 5MB for images, 100MB for videos
+const fileFilter = (req, file, cb) => {
+  const maxImageSize = 5 * 1024 * 1024; // 5MB
+  const maxVideoSize = 100 * 1024 * 1024; // 100MB
+  
+  if (file.fieldname === 'thumbnail') {
+    if (file.size > maxImageSize) {
+      cb(new Error('Thumbnail image must be less than 5MB'))
+    } else {
+      cb(null, true)
+    }
+  } else if (file.fieldname === 'videoUrl') {
+    if (file.size > maxVideoSize) {
+      cb(new Error('Video must be less than 100MB'))
+    } else {
+      cb(null, true)
+    }
+  } else {
+    cb(null, true)
+  }
+}
+
+export const upload = multer({ 
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 100 * 1024 * 1024 // 100MB max
+  }
+})
 
 
 
