@@ -192,4 +192,3 @@ export const editcourse = async (req, res) => {
     }
 };
 
-export
