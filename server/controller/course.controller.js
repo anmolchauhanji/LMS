@@ -77,10 +77,10 @@ export const createCourse = async (req, res) => {
             instructor: req.id
         });
 
-        return res.status(201).json({ 
+        return res.status(201).json({
             success: true,
-            course, 
-            message: 'Course created successfully' 
+            course,
+            message: 'Course created successfully'
         });
 
     } catch (error) {
@@ -92,29 +92,61 @@ export const createCourse = async (req, res) => {
     }
 };
 
-export const getcreatorcourse = async  (req,res)=>{
-try {
-    const userId = req.id
-    const course = await Course.find({instructor:userId})
-    
-    
-            if (!course ) {
-                return res.status(400).json({
-                    course:[],
-                    message: "course not found",
-                });
-            }
-            return res.status(200).json({course });
+export const getAllCourses = async (req, res) => {
+    try {
+        const courses = await Course.find().populate('instructor', 'name email');
+
+        if (!courses || courses.length === 0) {
+            return res.status(200).json({
+                success: true,
+                courses: [],
+                message: "No courses available",
+            });
         }
- catch (error) {
-    console.log(error);
-}
+        return res.status(200).json({
+            success: true,
+            courses,
+            message: "Courses fetched successfully"
+        });
+    } catch (error) {
+        console.error("GetAllCourses Error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch courses: " + error.message
+        });
     }
+};
+
+export const getcreatorcourse = async (req, res) => {
+    try {
+        const userId = req.id;
+        const course = await Course.find({ instructor: userId });
+
+        if (!course || course.length === 0) {
+            return res.status(200).json({
+                success: true,
+                courses: [],
+                message: "No courses found for this creator",
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            courses: course,
+            message: "Creator courses fetched successfully"
+        });
+    } catch (error) {
+        console.error("GetCreatorCourse Error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch creator courses: " + error.message
+        });
+    }
+};
 
 // export const getPublishedCourses = async (req, res) => {
 //     try {
 //         const courses = await Course.find({ ispublished: true }).populate('instructor', 'name photoUrl');
-        
+
 //         if (!courses || courses.length === 0) {
 //             return res.status(200).json({
 //                 courses: [],
@@ -192,3 +224,22 @@ export const editcourse = async (req, res) => {
     }
 };
 
+
+export const getCourseById = async (req, res) => {
+    try {
+        const { courseId } = req.params
+        const course = await Course.findById(courseId)
+        if (!course) {
+            return res.status(400).json({
+                message: "course not found"
+            })
+        }
+        return res.status(200).json({
+            course
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+
+}

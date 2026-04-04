@@ -1,7 +1,7 @@
 import express from "express"
 import isAuthenticated from "../middlewares/IsAuthenticated.js"
 import { handleMulterError } from "../middlewares/errorHandler.js"
-import { createCourse, editcourse, getcreatorcourse, getPublishedCourses } from "../controller/course.controller.js"
+import { getAllCourses, createCourse, editcourse, getcreatorcourse, getCourseById } from "../controller/course.controller.js"
 import { upload } from "../utils/multer.js"
 
 const router = express.Router()
@@ -12,9 +12,13 @@ const uploadFiles = upload.fields([
   { name: 'videoUrl', maxCount: 1 }
 ]);
 
-// Specific routes MUST come before parameterized routes
-router.route("/published").get(getPublishedCourses)
+// Public routes (no authentication required)
+router.route("/all").get(getAllCourses)
+
+// Protected routes (authentication required)
 router.route("/").post(isAuthenticated, uploadFiles, handleMulterError, createCourse)
 router.route("/").get(isAuthenticated, getcreatorcourse)
+router.route("/courseId").get(isAuthenticated, getCourseById)
 router.route("/:courseId").put(isAuthenticated, upload.single("thumbnail"), handleMulterError, editcourse)
+
 export default router

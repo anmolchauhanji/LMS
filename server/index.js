@@ -1,5 +1,5 @@
 import express from "express"
-import connectdb from "./Databse/db.js";
+import connectdb from "./config/db.js";
 import dotenv  from "dotenv";
 import userrouter from './routes/user.route.js'
 import cookieParser from "cookie-parser";
